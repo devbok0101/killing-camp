@@ -1,58 +1,70 @@
+import sys
 from collections import deque
-from copy import deepcopy
+from itertools import combinations
+
+input = sys.stdin.readline()
+
+# n X n 정사각형, m 활성화 바이러스 개수
+n, m = map(int, input.split())
+board = [list(map(int, input.split())) for _ in range(n)]
+
+virus = []
+# 왜 answer 값을 이렇게 설정했나?
+answer = 1000000
+
+for r in range(n):
+    for c in range(n):
+        if board[r][c] == 2:
+            virus.append([r, c])
+            board[r][c] == '*'
+        elif board[r][c] == 1:
+            board[r][c] == '-'
+        elif board[r][c] == 0:
+            board[r][c] == '_'
 
 
-class Solution:
-    def solution(self, lab: list[list[int]], activate_virus_count: int) -> int:
-        row = len(lab)
-        column = len(lab[0])
-        dx = [-1, 1, 0, 0]
-        dy = [0, 0, -1, 1]
-
-        def activate_virus(answer, count):
-            if count == activate_virus_count:
-                return bfs(answer)
-
-            for cur_row in range(row):
-                for cur_column in range(column):
-                    # 바이러스이고, 아직 활성화된 바이러스 숫자가 다 안채워졌다
-                    if lab[cur_row][cur_column] == 2 and count < activate_virus_count:
-                        answer = activate_virus(answer, count + 1)
-                        lab[cur_row][cur_column] = 0
-                    # 바이러스이고, 아직 활성화된 바이러스 숫자가 다 채워진 경우 나머지 비활성화
-                    if lab[cur_row][cur_column] == 2 and count >= activate_virus_count:
-                        lab[cur_row][cur_column] = "*"
-            return answer
-
-        def bfs(answer):
-            virus_lab = deepcopy(lab)
-            queue = deque()
-
-            for cur_row in range(row):
-                for cur_column in range(column):
-                    if virus_lab[cur_row][cur_column] == 2:
-                        queue.append((cur_row, cur_column))
-
-            while queue:
-                cur_row, cur_col = queue.popleft()
-                for index in range(4):
-                    next_row, next_column = cur_row + dx[index], cur_col + dy[index]
-
-                    if 0 <= next_row < row and 0 <= next_column < column and virus_lab[next_row][next_column] == 0:
-                        virus_lab[next_row][next_column] = index
-                        queue.append((next_row, next_column))
-            count = 0
-            for cur_row in range(row):
-                for cur_column in range(column):
-                    count = max(count, virus_lab[cur_row][cur_column])
-            return max(answer, count)
-
-        count = 0
-        answer = activate_virus(0, count)
-        return answer
+# 유효성 검사 :: 이제 외움
+def validate(x, y):
+    return 0 <= x < n and 0 <= y < n
 
 
-print(Solution.solution(Solution, lab=[[0, 0, 0, 0, 0, 0],
-                                       [1, 0, 0, 0, 0, 2],
-                                       [1, 1, 1, 0, 0, 2],
-                                       [0, 0, 0, 0, 0, 2]], activate_virus_count=3))
+def bfs(v):
+    global answer
+    queue = deque()
+
+    for r, c in range(v):
+        queue.append([r, c, 0])
+    test_map = [b[:] for b in board]
+
+    max_level = 0
+    while queue:
+        r, c, level = queue.popleft()
+        for dr, dc in [[-1, 0], [1, 0], [0, -1], [0, 1]]:
+            next_r, next_c, next_level = r + dr, c + dc, level + 1
+            if validate(next_r, next_c):
+                if test_map[next_r][next_c] == '_':
+                    test_map[next_r][next_c] = next_level
+                    max_level = max(max_level, next_level)
+                elif test_map[next_r][next_c] == '*':
+                    test_map[next_r][next_c] == next_level
+                    queue.append([next_r, next_c, next_level])
+
+    for r in range(n):
+        for c in range(n):
+            if test_map[r][c] == '_':
+                return
+    # 정답 갱신?
+    answer = min(answer, max_level)
+    return
+
+
+for v in combinations(virus, m):
+    for r, c in v:
+        board[r][c] = 0
+    bfs(v)
+    for r, c in v:
+        board[r][c] = '*'
+
+if answer == 1000000:
+    answer = -1
+print(answer)
