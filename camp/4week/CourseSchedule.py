@@ -46,3 +46,4 @@ class Solution:
 
 #print(Solution.canFinish(Solution, numCourses=20, prerequisites=[[0,10],[3,18],[5,5],[6,11],[11,14],[13,1],[15,1],[17,4]]))
 print(Solution.canFinish(Solution, numCourses=6, prerequisites=[[2,0], [3, 0], [3, 1], [4, 1], [3, 2], [5, 2], [5, 3], [5, 4]]))
+
