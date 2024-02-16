@@ -20,8 +20,8 @@ class Solution:
                     reported_people[reported_person] = reported_count
 
         for user in id_list:
-            for badMan in reporters[user]:
-                total_count = reported_people[badMan]
+            for bad_man in reporters[user]:
+                total_count = reported_people[bad_man]
                 if total_count >= k:
                     mail[user] += 1
 
