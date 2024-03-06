@@ -18,3 +18,4 @@ class Solution:
 
 print(Solution.soulution(Solution, gift_cards=[4, 5, 3, 2, 1], wants=[2, 4, 4, 5, 1]))
 #print(Solution.soulution(Solution, gift_cards=[5,4,5,4,5], wants=[1,2,3,5,4]))
+ㄴ
